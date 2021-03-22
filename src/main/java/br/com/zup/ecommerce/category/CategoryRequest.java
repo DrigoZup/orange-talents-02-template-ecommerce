@@ -23,7 +23,7 @@ public class CategoryRequest {
     
     public Category converter(EntityManager manager) {
         Category category = new Category(name);
-        if(idCategory == null) {
+        if(idCategory != null) {
             Category motherCategory = manager.find(Category.class, idCategory);
             Assert.notNull(motherCategory, ID_CANNOT_BE_NULL);
             
