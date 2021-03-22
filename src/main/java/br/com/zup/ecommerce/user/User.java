@@ -27,7 +27,7 @@ public class User implements UserDetails{
     
     private String password;
     
-    private LocalDate signInMoment;
+    private LocalDate createAct;
     
     @Deprecated
     public User() {
@@ -39,15 +39,41 @@ public class User implements UserDetails{
         
         this.login = login;
         this.password = encoder.encode(password);
-        this.signInMoment = now();
+        this.createAct = now();
+    }
+    
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((login == null) ? 0 : login.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        User other = (User) obj;
+        if (login == null) {
+            if (other.login != null)
+                return false;
+        } else if (!login.equals(other.login))
+            return false;
+        return true;
     }
 
     public Long getId() {
         return id;
     }
     
-    public LocalDate getSignInMoment() {
-        return signInMoment;
+    public LocalDate getCreateAct() {
+        return createAct;
     }
 
     @Override

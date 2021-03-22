@@ -1,5 +1,10 @@
 package br.com.zup.ecommerce.product;
 
+import static br.com.zup.ecommerce.general.ConstantResponse.FIELD_CANNOT_BE_NULL;
+import static br.com.zup.ecommerce.general.ConstantResponse.FIELD_CANNOT_BE_BLANK;
+import static br.com.zup.ecommerce.general.ConstantResponse.UNAVALIBLE_DATA;
+import static br.com.zup.ecommerce.general.ConstantResponse.UNAVALIBLE_FORMAT;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -18,25 +23,25 @@ import br.com.zup.ecommerce.user.User;
 
 public class ProductRequest {
 
-    @NotBlank
+    @NotBlank(message = FIELD_CANNOT_BE_BLANK)
     @UniqueValue(domainClass = Product.class,fieldName = "name")
     private String name;
     @Positive
-    @NotNull
+    @NotNull(message = FIELD_CANNOT_BE_NULL)
     private Integer quantity;
     @NotBlank
-    @Size(max = 1000)
+    @Size(max = 1000, message = UNAVALIBLE_FORMAT)
     private String description;
-    @NotNull
-    @Positive
+    @NotNull(message = FIELD_CANNOT_BE_NULL)
+    @Positive(message = UNAVALIBLE_DATA)
     private Double price;
     
     private User owner = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     
-    @NotNull
+    @NotNull(message = FIELD_CANNOT_BE_NULL)
     private Long idCategory;
     
-    @Size(min = 3)
+    @Size(min = 3, message = UNAVALIBLE_DATA)
     @Valid
     private List<AttributeRequest> attributes = new ArrayList<AttributeRequest>();
     

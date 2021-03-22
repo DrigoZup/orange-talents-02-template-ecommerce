@@ -1,6 +1,8 @@
 package br.com.zup.ecommerce.product;
 
 import static java.time.LocalDate.now;
+import static br.com.zup.ecommerce.general.ConstantResponse.FIELD_CANNOT_BE_NULL;
+
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.HashSet;
@@ -19,6 +21,7 @@ import org.springframework.util.Assert;
 import br.com.zup.ecommerce.category.Category;
 import br.com.zup.ecommerce.product.attribute.AttributeProduct;
 import br.com.zup.ecommerce.product.attribute.AttributeRequest;
+import br.com.zup.ecommerce.product.images.ImageProduct;
 import br.com.zup.ecommerce.user.User;
 
 @Entity
@@ -31,7 +34,7 @@ public class Product {
     private Integer quantity;
     private String description;
     private Double price;
-    @NotNull
+    @NotNull(message = FIELD_CANNOT_BE_NULL)
     @Valid
     @ManyToOne
     private Category category;
@@ -44,6 +47,9 @@ public class Product {
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.PERSIST)
     private Set<AttributeProduct> attributes = new HashSet<>();
+    
+    @OneToMany(mappedBy = "product", cascade = CascadeType.MERGE)
+    private Set<ImageProduct> images = new HashSet<>();
 
     @Deprecated
     public Product() {}
@@ -82,6 +88,10 @@ public class Product {
     public Category getCategory() {
         return category;
     }
+    
+    public User getOwner() {
+        return owner;
+    }
 
      public LocalDate getCreateAct() {
         return createAct;
@@ -114,6 +124,14 @@ public class Product {
         } else if (!name.equals(other.name))
             return false;
         return true;
+    }
+
+    public void relateImages(Set<String> links) {
+        Set<ImageProduct> images = links.stream()
+                .map(link -> new ImageProduct(this, link))
+                .collect(Collectors.toSet());
+
+        this.images.addAll(images);
     }
 
 }

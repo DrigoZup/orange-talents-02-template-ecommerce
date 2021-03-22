@@ -10,7 +10,7 @@ public class UserResponse {
     
     public UserResponse(User user) {
         login = user.getUsername();
-        signInMoment = user.getSignInMoment();
+        signInMoment = user.getCreateAct();
     }
 
     public String getLogin() {
