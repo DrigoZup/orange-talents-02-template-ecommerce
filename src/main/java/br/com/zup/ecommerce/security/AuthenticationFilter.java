@@ -10,6 +10,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 import br.com.zup.ecommerce.user.User;
 import br.com.zup.ecommerce.user.UserRepository;
+import br.com.zup.ecommerce.user.current.AuthUser;
 
 public class AuthenticationFilter extends OncePerRequestFilter{
     
@@ -35,9 +36,10 @@ public class AuthenticationFilter extends OncePerRequestFilter{
     }
     
     private void authUser(String token) {
-        Long idUsuario = tokenService.getIdUser(token);
-        User usuario = repository.findById(idUsuario).get();
-        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(usuario, null, usuario.getAuthorities());
+        Long idUser = tokenService.getIdUser(token);
+        User user = repository.findById(idUser).get();
+        AuthUser current = new AuthUser(user);
+        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(user, null, current.getAuthorities());
         SecurityContextHolder.getContext().setAuthentication(authentication);
     }
 

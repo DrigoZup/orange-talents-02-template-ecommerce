@@ -1,10 +1,9 @@
 package br.com.zup.ecommerce.product;
 
-import static br.com.zup.ecommerce.general.ConstantResponse.FIELD_CANNOT_BE_NULL;
 import static br.com.zup.ecommerce.general.ConstantResponse.FIELD_CANNOT_BE_BLANK;
+import static br.com.zup.ecommerce.general.ConstantResponse.FIELD_CANNOT_BE_NULL;
 import static br.com.zup.ecommerce.general.ConstantResponse.UNAVALIBLE_DATA;
 import static br.com.zup.ecommerce.general.ConstantResponse.UNAVALIBLE_FORMAT;
-
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -15,11 +14,11 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
-import org.springframework.security.core.context.SecurityContextHolder;
 import br.com.zup.ecommerce.category.Category;
 import br.com.zup.ecommerce.general.UniqueValue;
 import br.com.zup.ecommerce.product.attribute.AttributeRequest;
 import br.com.zup.ecommerce.user.User;
+import br.com.zup.ecommerce.user.current.AuthUser;
 
 public class ProductRequest {
 
@@ -36,7 +35,7 @@ public class ProductRequest {
     @Positive(message = UNAVALIBLE_DATA)
     private Double price;
     
-    private User owner = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    private User owner;
     
     @NotNull(message = FIELD_CANNOT_BE_NULL)
     private Long idCategory;
@@ -44,18 +43,6 @@ public class ProductRequest {
     @Size(min = 3, message = UNAVALIBLE_DATA)
     @Valid
     private List<AttributeRequest> attributes = new ArrayList<AttributeRequest>();
-    
-
-    public ProductRequest( String name,  Integer quantity,
-             String description,
-             Double price,  Long idCategory, User owner, List<AttributeRequest> attributes) {
-        this.name = name;
-        this.quantity = quantity;
-        this.description = description;
-        this.price = price;
-        this.idCategory = idCategory;
-        this.attributes.addAll(attributes);
-    }
     
 
     public String getName() {
@@ -85,8 +72,9 @@ public class ProductRequest {
     public Product convertToEntity(EntityManager manager) {
         
         Category category = manager.find(Category.class, idCategory);
+        AuthUser user = new AuthUser(owner);
 
-        return new Product(name, quantity, description, price, category, owner, attributes);
+        return new Product(name, quantity, description, price, category, user.get(), attributes);
     }
     
     public Set<String> foundDuplicatedAttributes() {

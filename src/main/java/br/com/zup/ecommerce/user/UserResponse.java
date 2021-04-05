@@ -9,7 +9,7 @@ public class UserResponse {
     private LocalDate signInMoment;
     
     public UserResponse(User user) {
-        login = user.getUsername();
+        login = user.getLogin();
         signInMoment = user.getCreateAct();
     }
 

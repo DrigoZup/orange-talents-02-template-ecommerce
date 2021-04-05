@@ -47,7 +47,7 @@ public class ProductController {
         return new ProductResponse(product);
     }
     
-    @PutMapping(value = "/{id}/images")
+    @PutMapping(path = "/{id}/images")
     public ProductResponse addImages(@PathVariable Long id,@Valid ImageRequest request) {
         
         Product product = manager.find(Product.class, id);
