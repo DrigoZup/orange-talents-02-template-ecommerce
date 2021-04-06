@@ -1,6 +1,7 @@
 package br.com.zup.ecommerce.product;
 
 import static br.com.zup.ecommerce.general.ConstantResponse.FIELD_CANNOT_BE_NULL;
+import static br.com.zup.ecommerce.general.ConstantResponse.QUANTITY_CANNOT_BE_LESS_THEN_ZERO;
 import static java.time.LocalDate.now;
 import java.time.LocalDate;
 import java.util.Collection;
@@ -43,27 +44,27 @@ public class Product {
     @Valid
     @ManyToOne
     private Category category;
-    
+
     @ManyToOne
     @Valid
     private User owner;
-    
+
     private LocalDate createAct;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.PERSIST)
     private Set<AttributeProduct> attributes = new HashSet<>();
-    
+
     @OneToMany(mappedBy = "product", cascade = CascadeType.MERGE)
     private Set<ImageProduct> images = new HashSet<>();
 
     @OneToMany(mappedBy = "product")
     @OrderBy("title asc")
     private SortedSet<Question> questions = new TreeSet<>();
-    
+
     @OneToMany(mappedBy = "product", cascade = CascadeType.MERGE)
     private Set<Opinion> opinions = new HashSet<>();
 
-    
+
     @Deprecated
     public Product() {}
 
@@ -78,7 +79,7 @@ public class Product {
         this.createAct = now();
         this.attributes.addAll(attributes.stream().map(attribute -> attribute.convertToEntity(this))
                 .collect(Collectors.toSet()));
-        
+
         Assert.isTrue(attributes.size() >= 3, "The product needs at least 3 attributes");
     }
 
@@ -101,22 +102,22 @@ public class Product {
     public Category getCategory() {
         return category;
     }
-    
+
     public User getOwner() {
         return owner;
     }
 
-     public LocalDate getCreateAct() {
+    public LocalDate getCreateAct() {
         return createAct;
     }
 
-     public Collection<AttributeProduct> getAttributes() {
-         return attributes;
-     }
+    public Collection<AttributeProduct> getAttributes() {
+        return attributes;
+    }
 
     public ProductOpinion getOpinions() {
-            return new ProductOpinion(this.opinions);
-        
+        return new ProductOpinion(this.opinions);
+
     }
 
     public Set<ImageProduct> getImages() {
@@ -151,29 +152,36 @@ public class Product {
             return false;
         return true;
     }
-    
-    public <T> Set<T> mapperAttributes(
-            Function<AttributeProduct, T> mapperFunction) {
-        return this.attributes.stream().map(mapperFunction)
-                .collect(Collectors.toSet());
+
+    public <T> Set<T> mapperAttributes(Function<AttributeProduct, T> mapperFunction) {
+        return this.attributes.stream().map(mapperFunction).collect(Collectors.toSet());
     }
-    
-    public <T> Set<T> mapperImages(Function<ImageProduct, T> funcaoMapeadora) {
-        return this.images.stream().map(funcaoMapeadora)
-                .collect(Collectors.toSet());
+
+    public <T> Set<T> mapperImages(Function<ImageProduct, T> mapperFunction) {
+        return this.images.stream().map(mapperFunction).collect(Collectors.toSet());
     }
-    
-    public <T extends Comparable<T>> SortedSet<T> mapperQuestions(Function<Question, T> funcaoMapeadora) {
-        return this.questions.stream().map(funcaoMapeadora)
-                .collect(Collectors.toCollection(TreeSet :: new));
+
+    public <T extends Comparable<T>> SortedSet<T> mapperQuestions(
+            Function<Question, T> mapperFunction) {
+        return this.questions.stream().map(mapperFunction)
+                .collect(Collectors.toCollection(TreeSet::new));
     }
 
     public void relateImages(Set<String> links) {
-        Set<ImageProduct> images = links.stream()
-                .map(link -> new ImageProduct(this, link))
+        Set<ImageProduct> images = links.stream().map(link -> new ImageProduct(this, link))
                 .collect(Collectors.toSet());
 
         this.images.addAll(images);
+    }
+
+    public boolean decreasesStock(int quantity) {
+        Assert.isTrue(quantity > 0, QUANTITY_CANNOT_BE_LESS_THEN_ZERO + quantity);
+
+        if (quantity <= this.quantity) {
+            this.quantity -= quantity;
+            return true;
+        }
+        return false;
     }
 
 }
