@@ -1,4 +1,4 @@
-package br.com.zup.ecommerce.question;
+package br.com.zup.ecommerce.general;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;

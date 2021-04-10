@@ -1,4 +1,4 @@
-package br.com.zup.ecommerce.question;
+package br.com.zup.ecommerce.general;
 
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
