@@ -1,7 +1,7 @@
 package br.com.zup.ecommerce.category;
 
 import static br.com.zup.ecommerce.general.ConstantResponse.FIELD_CANNOT_BE_BLANK;
-import static br.com.zup.ecommerce.general.ConstantResponse.ID_CANNOT_BE_NULL;
+import static br.com.zup.ecommerce.general.ConstantResponse.FIELD_CANNOT_BE_NULL;
 
 import javax.persistence.EntityManager;
 import javax.validation.constraints.NotBlank;
@@ -23,9 +23,9 @@ public class CategoryRequest {
     
     public Category converter(EntityManager manager) {
         Category category = new Category(name);
-        if(idCategory == null) {
+        if(idCategory != null) {
             Category motherCategory = manager.find(Category.class, idCategory);
-            Assert.notNull(motherCategory, ID_CANNOT_BE_NULL);
+            Assert.notNull(motherCategory, FIELD_CANNOT_BE_NULL);
             
             category.setMother(motherCategory);
         }

@@ -8,6 +8,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import br.com.zup.ecommerce.user.User;
 import br.com.zup.ecommerce.user.UserRepository;
+import br.com.zup.ecommerce.user.current.AuthUser;
 
 @Service
 public class AuthenticationService implements UserDetailsService {
@@ -22,6 +23,6 @@ public class AuthenticationService implements UserDetailsService {
             
             throw new UsernameNotFoundException("Unavalible Datas!");
         }
-        return user.get();
+        return new AuthUser(user.get());
     }
 }
